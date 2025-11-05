@@ -41,14 +41,27 @@ function transformToOpenAIFormat(unified: UnifiedRequest): any {
 
 /**
  * 转换为 Anthropic Messages 格式的请求
+ * Anthropic API 要求 content 是对象数组,而不是字符串
  */
 function transformToAnthropicFormat(unified: UnifiedRequest): any {
+  // 转换 messages 格式:将 content 字符串转换为对象数组
+  const messages = unified.messages.map((msg) => ({
+    role: msg.role,
+    content: [
+      {
+        type: "text",
+        text: msg.content,
+      },
+    ],
+  }));
+
   return {
     model: unified.model,
-    messages: unified.messages,
+    messages,
     system: unified.system || undefined,
     temperature: unified.temperature ?? 0.7,
     max_tokens: unified.max_tokens ?? 1024,
+    stream: true, // Anthropic 代理需要 stream: true
   };
 }
 
@@ -74,6 +87,9 @@ export function transformRequest(
 
 /**
  * 构建请求头
+ * 支持不同 API 的认证方式:
+ * - OpenAI: Authorization: Bearer <key>
+ * - Anthropic: x-api-key: <key> (代理方式) 或 Authorization: Bearer <key> (官方 API)
  */
 export function buildHeaders(
   apiKey: string,
@@ -82,14 +98,32 @@ export function buildHeaders(
 ): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
     ...customHeaders,
   };
 
   // 某些 API 可能需要特殊的请求头
   switch (apiType) {
     case ApiType.ANTHROPIC_MESSAGES:
+      // Anthropic 代理通常使用 x-api-key 头
+      // 如果是代理服务(检测 API Key 格式),使用 x-api-key
+      // 否则使用标准的 Authorization 头
+      if (apiKey.startsWith("sk-")) {
+        // 代理格式的 key,使用 x-api-key
+        headers["x-api-key"] = apiKey;
+      } else {
+        // 官方 API key,使用 Authorization
+        headers["Authorization"] = `Bearer ${apiKey}`;
+      }
       headers["anthropic-version"] = "2023-06-01";
+      break;
+
+    case ApiType.OPENAI_COMPATIBLE:
+      // OpenAI 使用标准 Authorization 头
+      headers["Authorization"] = `Bearer ${apiKey}`;
+      break;
+
+    default:
+      headers["Authorization"] = `Bearer ${apiKey}`;
       break;
   }
 
