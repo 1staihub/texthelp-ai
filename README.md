@@ -60,13 +60,81 @@ console.log(result.output);
 
 ### 在扣子平台使用
 
+#### 第一步：在扣子中创建工具
+
+1. 在扣子平台创建新的工具或插件
+2. 选择"自定义代码"或"JavaScript/TypeScript"
+3. 粘贴以下代码：
+
 ```typescript
 import { handler } from 'texthelp-ai';
-import { Args } from 'texthelp-ai';
 
-// 在扣子平台的 handler 中使用
 export default handler;
 ```
+
+#### 第二步：配置工具元数据
+
+在扣子平台的工具配置界面添加以下参数：
+
+**输入参数：**
+| 参数名 | 类型 | 必填 | 说明 | 示例 |
+|--------|------|------|------|------|
+| api_url | string | 是 | AI API 的 URL | https://api.anthropic.com |
+| api_key | string | 是 | API 密钥 | sk-ant-xxx |
+| model | string | 是 | 模型名称 | claude-3-5-sonnet |
+| user_prompt | string | 是 | 用户提示词 | 写一个 Hello World |
+| system_prompt | string | 否 | 系统提示词 | 你是编程助手 |
+| temperature | number | 否 | 温度参数 (0-2) | 0.7 |
+| max_tokens | number | 否 | 最大令牌数 | 2048 |
+
+**输出参数：**
+| 参数名 | 类型 | 说明 |
+|--------|------|------|
+| output | string | AI 生成的文本内容 |
+
+#### 第三步：在工作流中使用
+
+在扣子工作流编辑器中：
+
+1. 添加此工具节点
+2. 配置参数绑定（可以固定值或绑定到上游节点）
+3. 连接输出到后续节点
+
+**简单问答流程示例：**
+```
+用户输入 → [texthelp-ai 工具] → 输出结果
+```
+
+参数配置：
+- `api_url`: 固定值 `https://api.anthropic.com`
+- `api_key`: 环境变量或密钥管理
+- `model`: 固定值 `claude-3-5-sonnet`
+- `user_prompt`: 绑定到用户输入
+- `system_prompt`: 固定值 `你是一个有帮助的助手`
+
+**多模型流程示例：**
+```
+用户选择模型 → [条件判断] → [Claude 工具配置] 或 [GPT 工具配置] → 输出
+```
+
+#### 第四步：使用环境变量保护密钥
+
+在扣子的环境变量配置中添加：
+- `ANTHROPIC_API_KEY`
+- `OPENAI_API_KEY`
+
+然后在工具参数中使用：
+- `api_key`: `$ANTHROPIC_API_KEY`
+
+#### 工具工作原理
+
+1. **参数验证** - 检查必填参数
+2. **API 类型检测** - 根据 model 或 URL 识别 API 格式
+3. **URL 规范化** - 自动补全不完整的 URL
+4. **请求转换** - 转换为目标 API 格式
+5. **发送请求** - 调用 AI API
+6. **响应提取** - 统一格式的输出
+7. **返回结果** - 返回给扣子工作流
 
 ### 进阶用法 - 模块化使用
 
