@@ -233,25 +233,29 @@ export default handler;
  * ```typescript
  * import { handler } from "texthelp-ai";
  *
- * const result = await handler({
- *   input: {
- *     api_url: "https://api.anthropic.com",
- *     api_key: "sk-ant-xxx...",
- *     model: "claude-3-5-sonnet",
- *     user_prompt: "写一个 Hello World 程序",
- *     system_prompt: "你是一个编程助手",
- *     temperature: "0.7",
- *     max_tokens: "2048"
- *   },
- *   logger: {
- *     debug: (msg, data) => console.log(`[DEBUG] ${msg}`, data),
- *     info: (msg, data) => console.log(`[INFO] ${msg}`, data),
- *     warn: (msg, data) => console.warn(`[WARN] ${msg}`, data),
- *     error: (msg, data) => console.error(`[ERROR] ${msg}`, data)
- *   }
- * });
+ * async function main() {
+ *   const result = await handler({
+ *     input: {
+ *       api_url: "https://api.anthropic.com",
+ *       api_key: "sk-ant-xxx...",
+ *       model: "claude-3-5-sonnet",
+ *       user_prompt: "写一个 Hello World 程序",
+ *       system_prompt: "你是一个编程助手",
+ *       temperature: "0.7",
+ *       max_tokens: "2048"
+ *     },
+ *     logger: {
+ *       debug: (msg, data) => console.log(`[DEBUG] ${msg}`, data),
+ *       info: (msg, data) => console.log(`[INFO] ${msg}`, data),
+ *       warn: (msg, data) => console.warn(`[WARN] ${msg}`, data),
+ *       error: (msg, data) => console.error(`[ERROR] ${msg}`, data)
+ *     }
+ *   });
  *
- * console.log("结果:", result.output);
+ *   console.log("结果:", result.output);
+ * }
+ *
+ * main().catch(console.error);
  * ```
  *
  * ### 示例 2: GPT 模型调用
@@ -259,18 +263,22 @@ export default handler;
  * ```typescript
  * import { handler } from "texthelp-ai";
  *
- * const result = await handler({
- *   input: {
- *     api_url: "https://api.openai.com/v1",
- *     api_key: process.env.OPENAI_API_KEY,
- *     model: "gpt-4",
- *     user_prompt: "What is machine learning?",
- *     temperature: "0.8"
- *   },
- *   logger: console  // 也可以直接使用 console 对象
- * });
+ * async function main() {
+ *   const result = await handler({
+ *     input: {
+ *       api_url: "https://api.openai.com/v1",
+ *       api_key: process.env.OPENAI_API_KEY,
+ *       model: "gpt-4",
+ *       user_prompt: "What is machine learning?",
+ *       temperature: "0.8"
+ *     },
+ *     logger: console
+ *   });
  *
- * return result;  // 返回给扣子
+ *   console.log("结果:", result.output);
+ * }
+ *
+ * main().catch(console.error);
  * ```
  *
  * ### 示例 3: 动态参数调用
