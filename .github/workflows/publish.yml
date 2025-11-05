@@ -53,6 +53,9 @@ jobs:
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "📦 Generated version: $CURRENT_VERSION"
 
+      - name: Rebuild after version change
+        run: npm run build
+
       - name: Push changes to GitHub
         run: |
           git push --follow-tags origin main
