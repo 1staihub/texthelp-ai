@@ -1,6 +1,6 @@
 {
   "name": "texthelp-ai",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Universal AI model API wrapper supporting OpenAI and Anthropic formats with intelligent model-based endpoint selection",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

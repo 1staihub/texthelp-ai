@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/1staihub/texthelp-ai/compare/v1.1.1...v1.1.2) (2025-11-05)
+
+
+### Documentation
+
+* update Coze platform integration guide in README ([08e7b40](https://github.com/1staihub/texthelp-ai/commit/08e7b409e356e296c032908cc31fe60a835ce282))
+
 ### [1.1.1](https://github.com/1staihub/texthelp-ai/compare/v1.1.0...v1.1.1) (2025-11-05)
 
 
