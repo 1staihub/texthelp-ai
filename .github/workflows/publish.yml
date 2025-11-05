@@ -1,0 +1,81 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Check version
+        id: version-check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Current version: $CURRENT_VERSION"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          echo "✓ Verifying build artifacts..."
+          ls -la dist/
+          [ -f dist/index.js ] && echo "✓ index.js found" || exit 1
+          [ -f dist/index.d.ts ] && echo "✓ index.d.ts found" || exit 1
+          echo "✓ Build verification passed"
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify npm publish
+        run: |
+          echo "⏳ Waiting for npm registry to update..."
+          sleep 10
+          npm view texthelp-ai@${{ steps.version-check.outputs.current_version }}
+          echo "✅ Successfully published texthelp-ai@${{ steps.version-check.outputs.current_version }}"
+
+      - name: Create GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version-check.outputs.current_version }}
+          body: |
+            🎉 Published to npm: https://www.npmjs.com/package/texthelp-ai
+            Version: ${{ steps.version-check.outputs.current_version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish success notification
+        if: success()
+        run: |
+          echo ""
+          echo "=========================================="
+          echo "✅ PUBLISH SUCCESSFUL"
+          echo "=========================================="
+          echo "Package: texthelp-ai"
+          echo "Version: ${{ steps.version-check.outputs.current_version }}"
+          echo "npm: https://www.npmjs.com/package/texthelp-ai"
+          echo "=========================================="
