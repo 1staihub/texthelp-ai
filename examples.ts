@@ -224,6 +224,118 @@ export default handler;
  *
  * 4. 连接输出到后续节点
  *
+ * ## 直接调用示例代码
+ *
+ * 如果你想在扣子中直接调用 handler，可以这样写：
+ *
+ * ### 示例 1: 基础调用 (Claude)
+ *
+ * ```typescript
+ * import { handler } from "texthelp-ai";
+ *
+ * const result = await handler({
+ *   input: {
+ *     api_url: "https://api.anthropic.com",
+ *     api_key: "sk-ant-xxx...",
+ *     model: "claude-3-5-sonnet",
+ *     user_prompt: "写一个 Hello World 程序",
+ *     system_prompt: "你是一个编程助手",
+ *     temperature: "0.7",
+ *     max_tokens: "2048"
+ *   },
+ *   logger: {
+ *     debug: (msg, data) => console.log(`[DEBUG] ${msg}`, data),
+ *     info: (msg, data) => console.log(`[INFO] ${msg}`, data),
+ *     warn: (msg, data) => console.warn(`[WARN] ${msg}`, data),
+ *     error: (msg, data) => console.error(`[ERROR] ${msg}`, data)
+ *   }
+ * });
+ *
+ * console.log("结果:", result.output);
+ * ```
+ *
+ * ### 示例 2: GPT 模型调用
+ *
+ * ```typescript
+ * import { handler } from "texthelp-ai";
+ *
+ * const result = await handler({
+ *   input: {
+ *     api_url: "https://api.openai.com/v1",
+ *     api_key: process.env.OPENAI_API_KEY,
+ *     model: "gpt-4",
+ *     user_prompt: "What is machine learning?",
+ *     temperature: "0.8"
+ *   },
+ *   logger: console  // 也可以直接使用 console 对象
+ * });
+ *
+ * return result;  // 返回给扣子
+ * ```
+ *
+ * ### 示例 3: 动态参数调用
+ *
+ * ```typescript
+ * import { handler } from "texthelp-ai";
+ *
+ * export default async function(input) {
+ *   // input 来自扣子工作流
+ *   const result = await handler({
+ *     input: {
+ *       api_url: input.api_url,
+ *       api_key: input.api_key,
+ *       model: input.model,
+ *       user_prompt: input.user_prompt,
+ *       system_prompt: input.system_prompt,
+ *       temperature: input.temperature || "0.7",
+ *       max_tokens: input.max_tokens || "2048"
+ *     },
+ *     logger: {
+ *       debug: console.log,
+ *       info: console.log,
+ *       warn: console.warn,
+ *       error: console.error
+ *     }
+ *   });
+ *
+ *   return result;
+ * }
+ * ```
+ *
+ * ### 示例 4: 错误处理
+ *
+ * ```typescript
+ * import { handler } from "texthelp-ai";
+ *
+ * export default async function(input) {
+ *   try {
+ *     const result = await handler({
+ *       input,
+ *       logger: console
+ *     });
+ *
+ *     // 检查是否有错误
+ *     if (result.output.includes("关键参数缺失") ||
+ *         result.output.includes("API 请求失败")) {
+ *       return {
+ *         success: false,
+ *         error: result.output
+ *       };
+ *     }
+ *
+ *     return {
+ *       success: true,
+ *       content: result.output
+ *     };
+ *   } catch (error) {
+ *     return {
+ *       success: false,
+ *       error: error.message
+ *     };
+ *   }
+ * }
+ * ```
+ *
  * ## 步骤 4: 工作流示例
  *
  * ### 简单的问答流程
