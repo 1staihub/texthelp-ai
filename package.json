@@ -1,0 +1,48 @@
+{
+  "name": "texthelp-ai",
+  "version": "1.0.0",
+  "description": "Universal AI model API wrapper supporting OpenAI and Anthropic formats with intelligent model-based endpoint selection",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "ai",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt",
+    "api-wrapper",
+    "coze",
+    "texthelp",
+    "large-language-model",
+    "llm"
+  ],
+  "author": "1staihub",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1staihub/texthelp-ai"
+  },
+  "bugs": {
+    "url": "https://github.com/1staihub/texthelp-ai/issues"
+  },
+  "homepage": "https://github.com/1staihub/texthelp-ai#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}
