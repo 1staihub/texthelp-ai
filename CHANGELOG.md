@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/1staihub/texthelp-ai/compare/v1.1.0...v1.1.1) (2025-11-05)
+
+
+### Bug Fixes
+
+* wrap async handler calls in async functions in code examples ([e955b1a](https://github.com/1staihub/texthelp-ai/commit/e955b1a917c4a06e0d0caa742fee957b682f91d3))
+
+
+### Code Refactoring
+
+* rewrite examples.ts with executable code instead of comments ([9de724e](https://github.com/1staihub/texthelp-ai/commit/9de724e71f657f64cccaaf2717ee6fb70f7d250a))
+
 ## [1.1.0](https://github.com/1staihub/texthelp-ai/compare/v1.0.7...v1.1.0) (2025-11-05)
 
 
