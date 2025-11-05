@@ -21,7 +21,7 @@ function extractFromOpenAIResponse(response: any): UnifiedResponse {
 
   if (!content) {
     throw new Error(
-      "无法从 OpenAI 响应中提取内容: choices[0].message.content 不存在"
+      "无法从 OpenAI 响应中提取内容: choices[0].message.content 不存在",
     );
   }
 
@@ -36,13 +36,28 @@ function extractFromOpenAIResponse(response: any): UnifiedResponse {
 
 /**
  * 从 Anthropic Messages 格式响应提取内容
+ * 支持两种格式:
+ * 1. 流式响应: {content: "已解析的文本"}
+ * 2. JSON 响应: {content: [{type: "text", text: "..."}]}
  */
 function extractFromAnthropicResponse(response: any): UnifiedResponse {
+  // 如果 content 是字符串(来自流式解析)
+  if (typeof response.content === "string") {
+    return {
+      content: response.content,
+      usage: {
+        input_tokens: response.usage?.input_tokens,
+        output_tokens: response.usage?.output_tokens,
+      },
+    };
+  }
+
+  // 如果 content 是对象数组(来自 JSON 响应)
   const content = response.content?.[0]?.text;
 
   if (!content) {
     throw new Error(
-      "无法从 Anthropic 响应中提取内容: content[0].text 不存在"
+      "无法从 Anthropic 响应中提取内容: 期望 content 为字符串或对象数组",
     );
   }
 

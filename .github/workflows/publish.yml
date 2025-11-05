@@ -60,6 +60,9 @@ jobs:
         run: |
           git push --follow-tags origin main
 
+      - name: Clean before publish
+        run: npm ci --prefer-offline --no-audit
+
       - name: Publish to npm
         run: npm publish
         env:

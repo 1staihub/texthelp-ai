@@ -5,6 +5,7 @@
 
 import { Args, TexthelpInput, TexthelpOutput, Logger } from "./types";
 import {
+  ApiType,
   detectApiType,
   normalizeApiUrl,
   isValidApiUrl,
@@ -54,14 +55,71 @@ function parseTemperature(value: any): number {
 function parseMaxTokens(value: any): number {
   try {
     const tokens =
-      typeof value === "string" ? parseInt(value, 10) : (value ?? 20000000);
+      typeof value === "string" ? parseInt(value, 10) : (value ?? 1024);
     if (isNaN(tokens) || tokens <= 0) {
-      return 20000000;
+      return 1024;
     }
     return tokens;
   } catch {
-    return 20000000;
+    return 1024;
   }
+}
+
+/**
+ * 解析 Server-Sent Events (SSE) 格式的响应
+ * Anthropic 流式响应格式:
+ * event: message_start
+ * data: {...}
+ *
+ * event: content_block_delta
+ * data: {...delta_content...}
+ *
+ * event: message_stop
+ * data: {...}
+ */
+function parseSSEResponse(text: string, apiType: ApiType): string {
+  let content = "";
+
+  // 按行分割
+  const lines = text.split("\n");
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // 跳过空行和 ping
+    if (!line || line.startsWith(":")) {
+      continue;
+    }
+
+    // 处理 data: 行
+    if (line.startsWith("data:")) {
+      const jsonStr = line.substring("data:".length).trim();
+
+      try {
+        const data = JSON.parse(jsonStr);
+
+        // Anthropic Messages API 流式格式
+        if (apiType === ApiType.ANTHROPIC_MESSAGES) {
+          if (
+            data.type === "content_block_delta" &&
+            data.delta?.type === "text_delta"
+          ) {
+            content += data.delta.text || "";
+          }
+        }
+        // OpenAI 兼容格式 (如果需要)
+        else if (apiType === ApiType.OPENAI_COMPATIBLE) {
+          if (data.choices?.[0]?.delta?.content) {
+            content += data.choices[0].delta.content;
+          }
+        }
+      } catch (e) {
+        // 忽略 JSON 解析错误,继续处理下一行
+      }
+    }
+  }
+
+  return content;
 }
 
 /**
@@ -182,8 +240,24 @@ export async function handler({
       return { output: errorMsg };
     }
 
-    const responseData = await response.json();
-    logger.debug("成功获取 API 响应", { data: responseData });
+    // ==================== 处理响应 (支持流式和非流式) ====================
+    // 检查是否是流式响应 (Content-Type: text/event-stream)
+    const contentType = response.headers.get("content-type") || "";
+    const isStream = contentType.includes("event-stream");
+
+    let responseData: any;
+
+    if (isStream) {
+      // 处理 Server-Sent Events (SSE) 格式的流式响应
+      const text = await response.text();
+      const content = parseSSEResponse(text, detectedApiType);
+      responseData = { content };
+      logger.debug("成功解析流式 API 响应");
+    } else {
+      // 处理普通 JSON 响应
+      responseData = await response.json();
+      logger.debug("成功获取 API 响应", { data: responseData });
+    }
 
     // ==================== 提取响应内容 ====================
     const extractedContent = extractContent(responseData, detectedApiType);
