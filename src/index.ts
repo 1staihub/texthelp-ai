@@ -104,17 +104,15 @@ export async function handler({
     logger.debug("检测 API 类型和规范化 URL");
 
     const apiType = detectApiType(input.api_url);
-    const { url: normalizedUrl, detectedType: initialType } = normalizeApiUrl(
-      input.api_url,
-      apiType !== undefined ? apiType : undefined,
-    );
-
-    // 根据模型名称智能选择最优的 API 类型
-    const optimizedApiType = getOptimalApiType(input.model, initialType);
+    const { url: normalizedUrl, detectedType: detectedApiType } =
+      normalizeApiUrl(
+        input.api_url,
+        apiType !== undefined ? apiType : undefined,
+        input.model, // 传递模型名称以支持智能类型判断
+      );
 
     logger.info("API 类型检测完成", {
-      initial_detected_type: initialType,
-      optimized_api_type: optimizedApiType,
+      detected_type: detectedApiType,
       model: input.model,
       normalized_url: normalizedUrl,
     });
@@ -152,15 +150,15 @@ export async function handler({
         temperature,
         max_tokens: maxTokens,
       },
-      optimizedApiType,
+      detectedApiType,
     );
 
     logger.debug("请求格式转换完成", {
-      api_type: optimizedApiType,
+      api_type: detectedApiType,
     });
 
     // ==================== 构建请求头 ====================
-    const headers = buildHeaders(input.api_key, optimizedApiType);
+    const headers = buildHeaders(input.api_key, detectedApiType);
 
     logger.debug("请求头构建完成");
 
@@ -168,7 +166,7 @@ export async function handler({
     logger.info("开始调用 AI API", {
       url: normalizedUrl,
       model: input.model,
-      api_type: optimizedApiType,
+      api_type: detectedApiType,
     });
 
     const response = await fetch(normalizedUrl, {
@@ -188,7 +186,7 @@ export async function handler({
     logger.debug("成功获取 API 响应", { data: responseData });
 
     // ==================== 提取响应内容 ====================
-    const extractedContent = extractContent(responseData, optimizedApiType);
+    const extractedContent = extractContent(responseData, detectedApiType);
 
     logger.info("成功提取响应内容", {
       content_length: extractedContent.content.length,
