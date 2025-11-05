@@ -2,10 +2,18 @@
  * texthelp-ai 使用示例
  */
 
+import {
+  handler,
+  detectApiType,
+  getOptimalApiType,
+  normalizeApiUrl,
+  transformRequest,
+  buildHeaders,
+  extractContent,
+} from "./src/index";
+
 // 示例 1: 在扣子平台中使用
 // =====================================================
-
-import { handler } from "texthelp-ai";
 
 // 扣子平台会自动调用这个 handler
 export default handler;
@@ -13,20 +21,19 @@ export default handler;
 // 示例 2: 独立使用
 // =====================================================
 
-import { handler as texthelpHandler, Args, TexthelpInput, TexthelpOutput } from "texthelp-ai";
-
 // 创建一个简单的日志记录器
 const logger = {
   debug: (msg: string, data?: any) => console.log(`[DEBUG] ${msg}`, data || ""),
   info: (msg: string, data?: any) => console.log(`[INFO] ${msg}`, data || ""),
   warn: (msg: string, data?: any) => console.warn(`[WARN] ${msg}`, data || ""),
-  error: (msg: string, data?: any) => console.error(`[ERROR] ${msg}`, data || ""),
+  error: (msg: string, data?: any) =>
+    console.error(`[ERROR] ${msg}`, data || ""),
 };
 
 async function example1() {
   console.log("=== 示例 1: 使用 Claude 模型 ===\n");
 
-  const result = await texthelpHandler({
+  const result = await handler({
     input: {
       api_url: "https://api.anthropic.com",
       api_key: process.env.ANTHROPIC_API_KEY || "sk-xxx",
@@ -46,7 +53,7 @@ async function example1() {
 async function example2() {
   console.log("=== 示例 2: 使用 OpenAI GPT 模型 ===\n");
 
-  const result = await texthelpHandler({
+  const result = await handler({
     input: {
       api_url: "https://api.openai.com/v1",
       api_key: process.env.OPENAI_API_KEY || "sk-xxx",
@@ -66,7 +73,7 @@ async function example2() {
 async function example3() {
   console.log("=== 示例 3: 使用代理 API 服务 ===\n");
 
-  const result = await texthelpHandler({
+  const result = await handler({
     input: {
       api_url: "https://api-proxy.example.com/v1", // 不完整的 URL
       api_key: "sk-proxy-key",
@@ -85,15 +92,6 @@ async function example3() {
 async function example4() {
   console.log("=== 示例 4: 模块化使用 ===\n");
 
-  import {
-    detectApiType,
-    getOptimalApiType,
-    normalizeApiUrl,
-    transformRequest,
-    buildHeaders,
-    extractContent,
-  } from "texthelp-ai";
-
   // 检测 API 类型
   const apiType = detectApiType("https://api.example.com/v1/messages");
   console.log("检测到的 API 类型:", apiType);
@@ -105,7 +103,7 @@ async function example4() {
   // 规范化 URL
   const { url, detectedType } = normalizeApiUrl(
     "https://api.example.com/v1",
-    optimalType
+    optimalType,
   );
   console.log("规范化后的 URL:", url);
 
@@ -117,7 +115,7 @@ async function example4() {
       temperature: 0.7,
       max_tokens: 1024,
     },
-    detectedType
+    detectedType,
   );
   console.log("转换后的请求体:", JSON.stringify(requestBody, null, 2));
 
@@ -141,7 +139,7 @@ async function example5() {
   console.log("=== 示例 5: 错误处理 ===\n");
 
   // 缺少必填参数
-  const result1 = await texthelpHandler({
+  const result1 = await handler({
     input: {
       api_url: "", // 空 URL
       api_key: "sk-xxx",
@@ -163,7 +161,7 @@ async function runExamples() {
     await example1();
     await example2();
     await example3();
-    // await example4(); // 需要修复导入
+    await example4();
     await example5();
   } catch (error) {
     console.error("执行示例出错:", error);
