@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.5](https://github.com/1staihub/texthelp-ai/compare/v1.1.4...v1.1.5) (2025-11-05)
+
+
+### Bug Fixes
+
+* add .npmignore to include dist in npm package ([8999362](https://github.com/1staihub/texthelp-ai/commit/89993629b3df0781730b6bf8d30159562ddb1c1d))
+
 ### [1.1.4](https://github.com/1staihub/texthelp-ai/compare/v1.1.3...v1.1.4) (2025-11-05)
 
 
