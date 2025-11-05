@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](https://github.com/1staihub/texthelp-ai/compare/v1.1.6...v1.1.7) (2025-11-05)
+
+
+### Bug Fixes
+
+* improve Anthropic API request formatting and authentication ([18d32cd](https://github.com/1staihub/texthelp-ai/commit/18d32cd292dda85eccc7df45d2aba54056bccd2c))
+
 ### [1.1.6](https://github.com/1staihub/texthelp-ai/compare/v1.1.5...v1.1.6) (2025-11-05)
 
 
