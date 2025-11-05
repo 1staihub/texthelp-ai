@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/1staihub/texthelp-ai/compare/v1.1.5...v1.1.6) (2025-11-05)
+
+
+### Bug Fixes
+
+* change module format to CommonJS for compatibility ([44e8b0e](https://github.com/1staihub/texthelp-ai/commit/44e8b0ef9f0bd311dad02ac7f066366cfbcdd86b))
+* improve API endpoint auto-detection based on model name ([a26b77f](https://github.com/1staihub/texthelp-ai/commit/a26b77f75615ca68091c5e17019130bf944c2e5a))
+
 ### [1.1.5](https://github.com/1staihub/texthelp-ai/compare/v1.1.4...v1.1.5) (2025-11-05)
 
 
