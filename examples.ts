@@ -5,7 +5,7 @@
  * 工具会根据模型名称自动识别 API 类型并进行格式转换。
  */
 
-import { handler } from "./src/index";
+import { handler } from "texthelp-ai";
 
 /**
  * ========================================
