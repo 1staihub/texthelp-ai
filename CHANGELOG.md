@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/1staihub/texthelp-ai/compare/v1.2.0...v1.2.1) (2025-11-05)
+
+
+### Bug Fixes
+
+* remove system message from messages array for Anthropic API ([21d561c](https://github.com/1staihub/texthelp-ai/commit/21d561c5efd67ec26a1724475a8edc863190ea08))
+
 ## [1.2.0](https://github.com/1staihub/texthelp-ai/compare/v1.1.7...v1.2.0) (2025-11-05)
 
 
