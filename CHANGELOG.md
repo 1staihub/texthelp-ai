@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/1staihub/texthelp-ai/compare/v1.1.7...v1.2.0) (2025-11-05)
+
+
+### Features
+
+* add streaming response support and fix content extraction ([3644fa0](https://github.com/1staihub/texthelp-ai/commit/3644fa0c1c2f47d69c685a6ae5cbd8f37744e0da))
+
 ### [1.1.7](https://github.com/1staihub/texthelp-ai/compare/v1.1.6...v1.1.7) (2025-11-05)
 
 
