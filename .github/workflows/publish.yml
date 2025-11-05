@@ -26,12 +26,10 @@ jobs:
           node-version: "18"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Check version
-        id: version-check
+      - name: Setup git config
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Current version: $CURRENT_VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Install dependencies
         run: npm install
@@ -47,6 +45,18 @@ jobs:
           [ -f dist/index.d.ts ] && echo "✓ index.d.ts found" || exit 1
           echo "✓ Build verification passed"
 
+      - name: Generate version and changelog
+        id: release
+        run: |
+          npx standard-version --silent
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Generated version: $CURRENT_VERSION"
+
+      - name: Push changes to GitHub
+        run: |
+          git push --follow-tags origin main
+
       - name: Publish to npm
         run: npm publish
         env:
@@ -57,20 +67,17 @@ jobs:
         run: |
           echo "⏳ Waiting for npm registry to update..."
           sleep 15
-          npm view texthelp-ai@${{ steps.version-check.outputs.current_version }}
-          echo "✅ Successfully published texthelp-ai@${{ steps.version-check.outputs.current_version }}"
+          npm view texthelp-ai@${{ steps.release.outputs.current_version }}
+          echo "✅ Successfully published texthelp-ai@${{ steps.release.outputs.current_version }}"
 
       - name: Create GitHub Release
         if: success()
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.version-check.outputs.current_version }}
-          body: |
-            🎉 Published to npm: https://www.npmjs.com/package/texthelp-ai
-            Version: ${{ steps.version-check.outputs.current_version }}
+          tag_name: v${{ steps.release.outputs.current_version }}
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -82,6 +89,7 @@ jobs:
           echo "✅ PUBLISH SUCCESSFUL"
           echo "=========================================="
           echo "Package: texthelp-ai"
-          echo "Version: ${{ steps.version-check.outputs.current_version }}"
+          echo "Version: ${{ steps.release.outputs.current_version }}"
           echo "npm: https://www.npmjs.com/package/texthelp-ai"
+          echo "GitHub: https://github.com/1staihub/texthelp-ai/releases/tag/v${{ steps.release.outputs.current_version }}"
           echo "=========================================="

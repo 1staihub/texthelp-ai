@@ -13,7 +13,8 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "release": "standard-version"
   },
   "keywords": [
     "ai",
@@ -41,8 +42,9 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.0",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.3.0"
   },
   "files": [
     "dist",
