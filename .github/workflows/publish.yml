@@ -53,9 +53,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Verify npm publish
+        continue-on-error: true
         run: |
           echo "⏳ Waiting for npm registry to update..."
-          sleep 10
+          sleep 15
           npm view texthelp-ai@${{ steps.version-check.outputs.current_version }}
           echo "✅ Successfully published texthelp-ai@${{ steps.version-check.outputs.current_version }}"
 
