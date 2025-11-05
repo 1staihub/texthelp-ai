@@ -34,7 +34,7 @@ function transformToOpenAIFormat(unified: UnifiedRequest): any {
     model: unified.model,
     messages,
     temperature: unified.temperature ?? 0.7,
-    max_tokens: unified.max_tokens ?? 1024,
+    max_tokens: unified.max_tokens ?? 32000,
     stream: false,
   };
 }

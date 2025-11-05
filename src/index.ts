@@ -55,13 +55,13 @@ function parseTemperature(value: any): number {
 function parseMaxTokens(value: any): number {
   try {
     const tokens =
-      typeof value === "string" ? parseInt(value, 10) : (value ?? 1024);
+      typeof value === "string" ? parseInt(value, 10) : (value ?? 32000);
     if (isNaN(tokens) || tokens <= 0) {
-      return 1024;
+      return 32000;
     }
     return tokens;
   } catch {
-    return 1024;
+    return 32000;
   }
 }
 
@@ -176,14 +176,7 @@ export async function handler({
     });
 
     // ==================== 构建消息 ====================
-    const messages: Array<{ role: "system" | "user"; content: string }> = [];
-
-    if (input.system_prompt) {
-      messages.push({
-        role: "system",
-        content: input.system_prompt,
-      });
-    }
+    const messages: Array<{ role: "user"; content: string }> = [];
 
     messages.push({
       role: "user",
