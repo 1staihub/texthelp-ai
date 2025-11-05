@@ -3,15 +3,35 @@
  * 支持 OpenAI 和 Anthropic API 格式，智能选择最优的端点
  */
 
-export { ApiType, detectApiType, normalizeApiUrl, isValidApiUrl, getOptimalApiType } from "./api/detector";
-export { UnifiedRequest, transformRequest, buildHeaders } from "./api/transformer";
-export { UnifiedResponse, extractContent, isValidResponse } from "./api/extractor";
-export { TexthelpInput, TexthelpOutput, Args, Logger } from "./types";
-
 import { Args, TexthelpInput, TexthelpOutput, Logger } from "./types";
-import { detectApiType, normalizeApiUrl, isValidApiUrl, getOptimalApiType } from "./api/detector";
+import {
+  detectApiType,
+  normalizeApiUrl,
+  isValidApiUrl,
+  getOptimalApiType,
+} from "./api/detector";
 import { transformRequest, buildHeaders } from "./api/transformer";
 import { extractContent } from "./api/extractor";
+
+// Re-export 类型和函数供外部使用
+export {
+  ApiType,
+  detectApiType,
+  normalizeApiUrl,
+  isValidApiUrl,
+  getOptimalApiType,
+} from "./api/detector";
+export {
+  UnifiedRequest,
+  transformRequest,
+  buildHeaders,
+} from "./api/transformer";
+export {
+  UnifiedResponse,
+  extractContent,
+  isValidResponse,
+} from "./api/extractor";
+export { TexthelpInput, TexthelpOutput, Args, Logger } from "./types";
 
 /**
  * 解析温度参数
@@ -33,7 +53,8 @@ function parseTemperature(value: any): number {
  */
 function parseMaxTokens(value: any): number {
   try {
-    const tokens = typeof value === "string" ? parseInt(value, 10) : (value ?? 20000000);
+    const tokens =
+      typeof value === "string" ? parseInt(value, 10) : (value ?? 20000000);
     if (isNaN(tokens) || tokens <= 0) {
       return 20000000;
     }
@@ -48,12 +69,20 @@ function parseMaxTokens(value: any): number {
  * @param args 包含输入参数和日志记录器的对象
  * @returns 返回处理结果
  */
-export async function handler({ input, logger }: Args<TexthelpInput>): Promise<TexthelpOutput> {
+export async function handler({
+  input,
+  logger,
+}: Args<TexthelpInput>): Promise<TexthelpOutput> {
   try {
     // ==================== 参数验证 ====================
     logger.debug("开始参数验证");
 
-    if (!input.api_url || !input.api_key || !input.model || !input.user_prompt) {
+    if (
+      !input.api_url ||
+      !input.api_key ||
+      !input.model ||
+      !input.user_prompt
+    ) {
       const errorMsg =
         "关键参数缺失: 'api_url', 'api_key', 'model', 'user_prompt' 都是必填项。";
       logger.error(errorMsg);
