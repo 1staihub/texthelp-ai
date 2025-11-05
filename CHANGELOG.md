@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/1staihub/texthelp-ai/compare/v1.1.2...v1.1.3) (2025-11-05)
+
+
+### Bug Fixes
+
+* add CommonJS require export to package.json ([8510393](https://github.com/1staihub/texthelp-ai/commit/8510393a11473cc86e6145b14021be2e7a52ad74))
+
 ### [1.1.2](https://github.com/1staihub/texthelp-ai/compare/v1.1.1...v1.1.2) (2025-11-05)
 
 
